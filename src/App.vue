@@ -1,30 +1,41 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
   <router-view/>
 </template>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Comfortaa', cursive;
 }
 
-nav {
-  padding: 30px;
+body {
+  background-color: #030e1b;
+  color: #fff;
 }
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
+a {
+  text-decoration: none;
+  color: #D1CAC4;
 }
 
-nav a.router-link-exact-active {
-  color: #42b983;
+button {
+  padding: .5rem 1.2rem;
+  width: fit-content;
+  border-radius: 3px;
+  border: none;
+  transition-duration: .5s;
+  cursor: pointer;
+  background-color: #dc68cf;
+}
+
+button:hover {
+  background-color: #637bb0;
+  color: #fff;
 }
 </style>
