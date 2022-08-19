@@ -7,38 +7,44 @@
     </header>
 
     <div class="recipes">
-
+      <div class="card" v-for="recipe in $store.state.recipes" :key="recipe.slug">
+        <h2>{{ recipe.title }}</h2>
+        <p>{{ recipe.description }}</p>
+        <router-link :to="`/recipe/${recipe.slug}`" >
+          <button>View Recipe</button>
+        </router-link>
+      </div>
     </div>
 
     <div class="add_recipe_popup" v-if="popupOpen">
       <div class="popup_content">
         <h2>Add new recipe</h2>
 
-        <form @submit.prevent="">
+        <form @submit.prevent="addNewRecipe">
           <div class="group">
             <label>Title</label>
-            <input type="text" />
+            <input type="text" v-model='newRecipe.title'/>
           </div>
 
           <div class="group">
             <label>Description</label>
-            <textarea></textarea>
+            <textarea v-model='newRecipe.description'></textarea>
           </div>
 
           <div class="group">
             <label>Ingredients</label>
-            <div class="ingredient">
-              <input type="text" />
+            <div class="ingredient" v-for="i in newRecipe.ingredientRows" :key="i" >
+              <input type="text" v-model="newRecipe.ingredients[i -1]" />
             </div>
-            <button type="button">Add Ingredient</button>
+            <button type="button" @click="addNewIngredient">Add Ingredient</button>
           </div>
 
           <div class="group">
             <label>Method</label>
-            <div class="method">
-              <textarea></textarea>
+            <div class="method" v-for="i in newRecipe.methodRows" :key="i">
+              <textarea v-model="newRecipe.method[i -1]"></textarea>
             </div>
-            <button type="button">Add Step</button>
+            <button type="button"  @click="addNewStep">Add Step</button>
           </div>
 
           <button type="submit">Add Recipe</button>
@@ -53,6 +59,7 @@
 <script>
 
 import { ref } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
   name: 'HomeView',
@@ -67,15 +74,49 @@ export default {
     })
 
     const popupOpen = ref(false);
+    const store = useStore()
 
     const togglePopup = () => {
       popupOpen.value = !popupOpen.value
     }
 
+    const addNewIngredient = () => {
+      newRecipe.value.ingredientRows++;
+    }
+
+    const addNewStep = () => {
+      newRecipe.value.methodRows++;
+    }
+
+    const addNewRecipe = () => {
+      newRecipe.value.slug = newRecipe.value.title.toLowerCase().replace(/\s/g, '-');
+
+      if (newRecipe.value.slug == '') {
+        alert('Please enter a title');
+        return;
+      }
+
+      store.commit('ADD_RECIPE', { ...newRecipe.value })
+
+      newRecipe.value = {
+        title: '',
+        description: '',
+        ingredients: [],
+        method: [],
+        ingredientRows: 1,
+        methodRows: 1
+      }
+
+      togglePopup()
+    }
+
     return {
       newRecipe,
       togglePopup,
-      popupOpen
+      popupOpen,
+      addNewIngredient,
+      addNewStep,
+      addNewRecipe
     }
   }
 }
@@ -109,12 +150,26 @@ p {
 
 .recipes {
   display: grid;
+  gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .recipes .card {
   padding: 1rem;
-  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #0f345d;
+  border-radius: 4px;
+}
+
+.recipes .card h2 {
+  font-weight: 500;
+
+}
+
+.recipes .card p{
+  font-size: .7rem;
 }
 
 .add_recipe_popup {
@@ -127,6 +182,7 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: scroll;
 }
 
 .add_recipe_popup .popup_content {
